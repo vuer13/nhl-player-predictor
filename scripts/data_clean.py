@@ -25,9 +25,8 @@ def get_df():
     edit = edit[edit["season"] > 2018]
 
     edit = edit.dropna(subset=[
-        "next_games_played_pct",
+        "next_assists_per_game",
         "next_goals_per_game",
-        "next_assists_per_game"
     ])
 
     edit = addData(edit)
@@ -38,7 +37,7 @@ def lag_predict_data(all_players_df):
     to_lag = all_players_df
     to_lag = to_lag.sort_values(by=["playerId", "season"])
 
-    to_lag_5 = ["points", "ppg", "games_played", "pAssists", "sAssists", "goals", "gpg", "apg"]
+    to_lag_5 = ["points", "ppg", "pAssists", "sAssists", "goals", "gpg", "apg"]
 
     for stat in to_lag_5:
         for lag in range(1, 6):
@@ -54,7 +53,6 @@ def lag_predict_data(all_players_df):
     to_lag[f"{lag_col}_missing"] = to_lag[lag_col].isna().astype(int)
     to_lag[lag_col] = to_lag[lag_col].fillna(0)
     
-    to_lag["next_games_played_pct"] = to_lag.groupby("playerId")["games_played_pct"].shift(-1)
     to_lag["next_goals_per_game"] = to_lag.groupby("playerId")["gpg"].shift(-1)
     to_lag["next_assists_per_game"] = to_lag.groupby("playerId")["apg"].shift(-1).values.flatten()
 
@@ -81,8 +79,6 @@ def clean_season_df(df):
     df_filtered["ppg"] = (df_filtered["I_F_points"] / df_filtered["games_played"])
     df_filtered["apg"] = ((df_filtered["I_F_primaryAssists"] + df_filtered["I_F_secondaryAssists"])/ df_filtered["games_played"])
     df_filtered["gpg"] = (df_filtered["I_F_goals"] / df_filtered["games_played"])
-    df_filtered["season_cap"] = df_filtered["season"].apply(get_season_cap)
-    df_filtered["games_played_pct"] = np.minimum(df_filtered["games_played"] / df_filtered["season_cap"], 1.0)
     df_filtered = df_filtered.drop(["icetime"], axis = 1)
 
     df_filtered.rename(
@@ -100,14 +96,6 @@ def clean_season_df(df):
     )
 
     return df_filtered
-
-def get_season_cap(season):
-    if season == 2019:
-        return 70
-    elif season == 2020:
-        return 56
-    else:
-        return 82
 
 def addData(df):
     player_ids = df["playerId"].unique()
