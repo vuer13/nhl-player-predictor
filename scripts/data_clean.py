@@ -11,27 +11,45 @@ def get_df():
     all_players = []
 
     for year in range(2015, 2025):
-        file = f"data/pre-cleaned/players_{year}.csv"
+        file = f"../data/pre-cleaned/players_{year}.csv"
         clean_data = clean_season_df(pd.read_csv(file))
         all_players.append(clean_data) 
 
     all_players_df = pd.concat(all_players).reset_index(drop=True)
-    all_players_df.to_csv("data/combined_players_draft.csv", index=False)
+    all_players_df.to_csv("../data/combined_players_draft.csv", index=False)
 
     lag_predict_data(all_players_df)
 
-    edit = pd.read_csv("data/combined_players_draft2.csv")
+    edit = pd.read_csv("../data/combined_players_draft2.csv")
+
+    edit = addData(edit)
+    edit.to_csv("../data/combined_players_draft3.csv", index=False)
+    edit = teamClean()  
 
     edit = edit[edit["season"] > 2018]
+
+    # removes any outliers
+
+    edit = edit[edit["games_played"] >= 8]
+
+    gpg_cap = edit["gpg"].quantile(0.99)
+    edit = edit[edit["gpg"] <= gpg_cap]
+
+    apg_cap = edit["apg"].quantile(0.99)
+    edit = edit[edit["apg"] <= apg_cap]
+
+    games_played_per_cap = edit["games_played_per"].quantile(0.99)
+    edit = edit[edit["games_played_per"] <= games_played_per_cap]
+
+    edit.to_csv("../data/cleaned_data.csv", index=False)
 
     edit = edit.dropna(subset=[
         "next_assists_per_game",
         "next_goals_per_game",
+        "next_games_played_per"
     ])
 
-    edit = addData(edit)
-
-    edit.to_csv("data/combined_players_draft3.csv", index=False)
+    edit.to_csv("../data/cleaned_data_train.csv", index=False)
 
 def lag_predict_data(all_players_df):
     to_lag = all_players_df
@@ -56,7 +74,7 @@ def lag_predict_data(all_players_df):
     to_lag["next_goals_per_game"] = to_lag.groupby("playerId")["gpg"].shift(-1)
     to_lag["next_assists_per_game"] = to_lag.groupby("playerId")["apg"].shift(-1).values.flatten()
 
-    to_lag.to_csv("data/combined_players_draft2.csv", index=False)
+    to_lag.to_csv("../data/combined_players_draft2.csv", index=False)
 
 def clean_season_df(df):
 
@@ -137,6 +155,61 @@ def get_player_info(player_id):
     except Exception as e:
         print(played_id + " " + res.status_code)
         return None
+
+def teamClean():
+    all_teams = []
+
+    for year in range(2019, 2025):
+        file = f"../data/pre-cleaned/team_stats_{year}.csv"
+        clean_data = pd.read_csv(file)
+        all_teams.append(clean_data) 
+
+    all_teams_df = pd.concat(all_teams).reset_index(drop=True)
+
+    all_teams_df_final = wrangleTeams(all_teams_df)
+
+    to_lag = all_teams_df_final
+
+    for lag in range(1, 6):
+        lag_col = ag_col = f"games_played_per_lag_{lag}"
+        to_lag[lag_col] = to_lag.groupby("playerId")["games_played_per"].shift(lag)
+        to_lag[f"{lag_col}_missing"] = to_lag[lag_col].isna().astype(int)
+        to_lag[lag_col] = to_lag[lag_col].fillna(0)
+
+    lag_col = "games_played_lag_1"
+    to_lag[lag_col] = to_lag.groupby("playerId")["games_played"].shift(lag)
+    to_lag[f"{lag_col}_missing"] = to_lag[lag_col].isna().astype(int)
+    to_lag[lag_col] = to_lag[lag_col].fillna(0)
+
+    to_lag["next_games_played_per"] = to_lag.groupby("playerId")["games_played_per"].shift(-1)
+
+    return to_lag
+
+def wrangleTeams(df):
+    if "situation" in df.columns:
+        df_filtered = df[df["situation"] == "all"].copy()
+
+    columns = ["team", "season", "games_played", "xGoalsFor", "goalsFor", "highDangerShotsFor", "highDangerxGoalsFor", "highDangerGoalsFor"]
+    df_filtered = df_filtered[columns]
+    df_filtered["xGoalsFor - goalsFor"] = df_filtered["xGoalsFor"] - df_filtered["goalsFor"]
+
+    df_filtered.rename(
+        columns={
+            "games_played": "games_played_team",
+            "goalsFor": "goalsFor_team",
+            "highDangerShotsFor": "highDangerShotsFor_team",
+            "highDangerxGoalsFor": "highDangerxGoalsFor_team",
+            "xGoalsFor": "xGoalsFor_team"
+        },
+        inplace=True
+    ) 
+
+    all_players = pd.read_csv("../data/combined_players_draft3.csv")
+    df_merged_total = df_filtered.merge(all_players, on=["team", "season"], how="right")
+
+    df_merged_total["games_played_per"] = np.minimum(df_merged_total["games_played"] / df_merged_total["games_played_team"], 1.0)
+
+    return df_merged_total
 
 if __name__ == '__main__':
     get_df()
