@@ -10,11 +10,10 @@ import joblib
 
 df = pd.read_csv("../data/cleaned_data_train.csv")
 
-features = ["games_played", "icetime_per_game", "position", "icetime_per_game_lag_1", "icetime_per_game_lag_1_missing",
-            "games_played_per", "games_played_per_lag_1", "games_played_per_lag_1_missing", 
+features = ["games_played", "icetime_per_game", "position", "icetime_per_game_lag_1",
+            "games_played_per", "games_played_per_lag_1",
             "games_played_per_lag_2", "games_played_per_lag_3", "games_played_per_lag_4", "games_played_per_lag_5",
-            "games_played_per_lag_2_missing", "games_played_per_lag_3_missing", "games_played_per_lag_4_missing", "games_played_per_lag_5_missing",
-            "games_played_lag_1", "games_played_lag_1_missing", "points_per_60", "age"]
+            "games_played_lag_1", "points_per_60", "age"]
 target = ["next_games_played_per"]
 
 df_model = df.dropna(subset = features + target)
@@ -28,11 +27,11 @@ X_train.shape, X_valid.shape, Y_train.shape, Y_valid.shape
 # params from Jupyter Notebook
 xgb = XGBRegressor(random_state = 13, 
                     verbosity = 0,
-                    colsample_bytree = 1.0, 
+                    colsample_bytree = 0.8, 
                     learning_rate = 0.01, 
                     max_depth = 3, 
                     n_estimators = 300, 
-                    reg_alpha = 0.1, 
+                    reg_alpha = 0, 
                     reg_lambda = 5, 
                     subsample = 0.8)
 
