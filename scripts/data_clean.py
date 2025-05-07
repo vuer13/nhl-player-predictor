@@ -25,21 +25,21 @@ def get_df():
     edit = addData(edit)
     edit.to_csv("../data/combined_players_draft3.csv", index=False)
     edit = teamClean()  
+    edit.to_csv("../data/combined_players_draft4.csv", index=False)
 
     edit = edit[edit["season"] > 2018]
 
     # removes any outliers
-
     edit = edit[edit["games_played"] >= 8]
 
-    gpg_cap = edit["gpg"].quantile(0.99)
-    edit = edit[edit["gpg"] <= gpg_cap]
+    gpg_cap = edit["gpg"].quantile(0.01)
+    edit = edit[edit["gpg"] >= gpg_cap]
 
-    apg_cap = edit["apg"].quantile(0.99)
-    edit = edit[edit["apg"] <= apg_cap]
+    apg_cap = edit["apg"].quantile(0.01)
+    edit = edit[edit["apg"] >= apg_cap]
 
-    games_played_per_cap = edit["games_played_per"].quantile(0.99)
-    edit = edit[edit["games_played_per"] <= games_played_per_cap]
+    games_played_per_cap = edit["games_played_per"].quantile(0.01)
+    edit = edit[edit["games_played_per"] >= games_played_per_cap]
 
     edit.to_csv("../data/cleaned_data.csv", index=False)
 
@@ -61,15 +61,11 @@ def lag_predict_data(all_players_df):
         for lag in range(1, 6):
             lag_col = f"{stat}_lag_{lag}"
             to_lag[lag_col] = to_lag.groupby("playerId")[stat].shift(lag)
-            to_lag[f"{lag_col}_missing"] = to_lag[lag_col].isna().astype(int)
-            to_lag[lag_col] = to_lag[lag_col].fillna(0)
 
     to_lag_1 = ["icetime_per_game"]
 
     lag_col = "icetime_per_game_lag_1"
     to_lag[lag_col] = to_lag.groupby("playerId")["icetime_per_game"].shift(lag)
-    to_lag[f"{lag_col}_missing"] = to_lag[lag_col].isna().astype(int)
-    to_lag[lag_col] = to_lag[lag_col].fillna(0)
     
     to_lag["next_goals_per_game"] = to_lag.groupby("playerId")["gpg"].shift(-1)
     to_lag["next_assists_per_game"] = to_lag.groupby("playerId")["apg"].shift(-1).values.flatten()
@@ -170,17 +166,16 @@ def teamClean():
 
     to_lag = all_teams_df_final
 
+    to_lag = to_lag.sort_values(by=["playerId", "season"])
+
     for lag in range(1, 6):
         lag_col = ag_col = f"games_played_per_lag_{lag}"
         to_lag[lag_col] = to_lag.groupby("playerId")["games_played_per"].shift(lag)
-        to_lag[f"{lag_col}_missing"] = to_lag[lag_col].isna().astype(int)
-        to_lag[lag_col] = to_lag[lag_col].fillna(0)
 
     lag_col = "games_played_lag_1"
     to_lag[lag_col] = to_lag.groupby("playerId")["games_played"].shift(lag)
-    to_lag[f"{lag_col}_missing"] = to_lag[lag_col].isna().astype(int)
-    to_lag[lag_col] = to_lag[lag_col].fillna(0)
 
+    to_lag = to_lag.sort_values(["playerId", "season"]).reset_index(drop=True)
     to_lag["next_games_played_per"] = to_lag.groupby("playerId")["games_played_per"].shift(-1)
 
     return to_lag
@@ -205,7 +200,7 @@ def wrangleTeams(df):
     ) 
 
     all_players = pd.read_csv("../data/combined_players_draft3.csv")
-    df_merged_total = df_filtered.merge(all_players, on=["team", "season"], how="right")
+    df_merged_total = all_players.merge(df_filtered, on=["team", "season"], how="right")
 
     df_merged_total["games_played_per"] = np.minimum(df_merged_total["games_played"] / df_merged_total["games_played_team"], 1.0)
 
