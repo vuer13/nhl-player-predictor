@@ -10,10 +10,9 @@ import joblib
 
 df = pd.read_csv("../data/cleaned_data_train.csv")
 
-features = ["games_played", "icetime_per_game", "position", "icetime_per_game_lag_1",
-            "games_played_per", "games_played_per_lag_1",
+features = ["games_played", "icetime_per_game", "icetime_per_game_lag_1", "games_played_per", "games_played_per_lag_1",
             "games_played_per_lag_2", "games_played_per_lag_3", "games_played_per_lag_4", "games_played_per_lag_5",
-            "games_played_lag_1", "points_per_60", "age"]
+            "games_played_lag_1", "points_per_60", "age", "age2", 'pos_C', 'pos_D', 'pos_L', 'pos_R']
 target = ["next_games_played_per"]
 
 df_model = df
@@ -31,13 +30,9 @@ xgb = XGBRegressor(random_state = 0,
                     learning_rate = 0.01, 
                     max_depth = 3, 
                     n_estimators = 500, 
-                    reg_alpha = 0, 
+                    reg_alpha = 0.1, 
                     reg_lambda = 5, 
                     subsample = 0.8)
-
-le = LabelEncoder()
-X_train["position"] = le.fit_transform(X_train["position"])
-X_valid["position"] = le.transform(X_valid["position"])
 
 xgb.fit(X_train, Y_train)
 

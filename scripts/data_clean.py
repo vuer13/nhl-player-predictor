@@ -41,6 +41,10 @@ def get_df():
     games_played_per_cap = edit["games_played_per"].quantile(0.01)
     edit = edit[edit["games_played_per"] >= games_played_per_cap]
 
+    edit["age2"] = edit["age"] * edit["age"]
+    dummies = pd.get_dummies(edit["position"], prefix="pos", dummy_na=False)
+    edit = pd.concat([edit, dummies], axis=1)
+
     edit.to_csv("../data/cleaned_data.csv", index=False)
 
     edit = edit.dropna(subset=[

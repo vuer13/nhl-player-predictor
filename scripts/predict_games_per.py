@@ -7,15 +7,11 @@ def predict():
     df_2024 = processData()
     model = joblib.load('../models/xgb_model_games_played.pkl')
 
-    features = ["games_played", "icetime_per_game", "position", "icetime_per_game_lag_1",
-            "games_played_per", "games_played_per_lag_1",
+    features = ["games_played", "icetime_per_game", "icetime_per_game_lag_1", "games_played_per", "games_played_per_lag_1",
             "games_played_per_lag_2", "games_played_per_lag_3", "games_played_per_lag_4", "games_played_per_lag_5",
-            "games_played_lag_1", "points_per_60", "age"]
+            "games_played_lag_1", "points_per_60", "age", "age2", 'pos_C', 'pos_D', 'pos_L', 'pos_R']
 
     df_2024_predict = df_2024[features]
-
-    le = LabelEncoder()
-    df_2024_predict["position"] = le.fit_transform(df_2024_predict["position"])
 
     prediction = model.predict(df_2024_predict)
 
