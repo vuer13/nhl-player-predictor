@@ -10,10 +10,16 @@ import joblib
 
 df = pd.read_csv("../data/cleaned_data_train.csv")
 
-features = ["games_played", "icetime_per_game", "icetime_per_game_lag_1", "games_played_per", "games_played_per_lag_1",
-            "games_played_per_lag_2", "games_played_per_lag_3", "games_played_per_lag_4", "games_played_per_lag_5",
-            "games_played_lag_1", "points_per_60", "age", "age2", 'pos_C', 'pos_D', 'pos_L', 'pos_R']
-target = ["next_games_played_per"]
+features = ["age", "age2", 'pos_C', 'pos_D', 'pos_L', 'pos_R', 'games_played', 'xGoals',
+            'pAssists', 'sAssists', 'sog', 'points', 'goals', 'on_ice_chances', 'on_ice_goals', 
+            'icetime_per_game', 'shot_percentage', 'points_per_60', 'ixG-goals', 'ppg', 'apg', 'gpg',
+            'points_lag_1', 'points_lag_2', 'points_lag_3', 'points_lag_4', 'points_lag_5', 
+            'ppg_lag_1', 'ppg_lag_2', 'ppg_lag_3', 'ppg_lag_4', 'ppg_lag_5', 'pAssists_lag_1', 'sAssists_lag_1',
+            'goals_lag_1', 'goals_lag_2', 'goals_lag_3', 'goals_lag_4', 'goals_lag_5', 
+            'gpg_lag_1', 'gpg_lag_2', 'gpg_lag_3', 'gpg_lag_4', 'gpg_lag_5', 'apg_lag_1',
+            'xGoalsFor_team', 'goalsFor_team', 'highDangerShotsFor_team', 'highDangerxGoalsFor_team',
+            'highDangerGoalsFor', 'xGoalsFor - goalsFor', 'games_played_per']
+target = ["next_goals_per_game"]
 
 df_model = df
 
@@ -29,9 +35,9 @@ xgb = XGBRegressor(random_state = 0,
                     colsample_bytree = 0.8, 
                     learning_rate = 0.01, 
                     max_depth = 3, 
-                    n_estimators = 500, 
+                    n_estimators = 700, 
                     reg_alpha = 0.1, 
-                    reg_lambda = 5, 
+                    reg_lambda = 1, 
                     subsample = 0.8)
 
 xgb.fit(X_train, Y_train)
@@ -45,6 +51,7 @@ print("MSE:", mse)
 print("MAE:", mae)
 print("R²:", r2)
 
+
 # Check overfitting
 train_preds = xgb.predict(X_train)
 val_preds = xgb.predict(X_valid)
@@ -52,4 +59,4 @@ val_preds = xgb.predict(X_valid)
 print("Train R²:", r2_score(Y_train, train_preds))
 print("Val   R²:", r2_score(Y_valid, val_preds))
 
-joblib.dump(xgb, "../models/xgb_model_games_played.pkl")
+joblib.dump(xgb, "../models/xgb_model_goals.pkl")
