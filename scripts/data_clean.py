@@ -45,6 +45,14 @@ def get_df():
     dummies = pd.get_dummies(edit["position"], prefix="pos", dummy_na=False)
     edit = pd.concat([edit, dummies], axis=1)
 
+    edit["points_weighted"] = edit["points"] - edit["points_lag_5"]
+    edit["assists_weighted"] = edit["pAssists"] + edit["sAssists"] - edit["pAssists_lag_5"] - edit["sAssists_lag_5"]
+    edit["goals_weighted"] = edit["goals"] - edit["goals_lag_5"]
+
+    edit["ppg_weighted"] = edit["ppg"] - edit["ppg_lag_5"]
+    edit["apg_weighted"] = edit["apg"] - edit["apg_lag_5"]
+    edit["gpg_weighted"] = edit["gpg"] - edit["gpg_lag_5"]
+
     edit.to_csv("../data/cleaned_data.csv", index=False)
 
     edit = edit.dropna(subset=[

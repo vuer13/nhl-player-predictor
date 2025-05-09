@@ -45,10 +45,10 @@ def model():
     study = optuna.create_study(direction = "maximize")
     study.optimize(estimate, n_trials = 150)
 
-    best_model = XGBRegressor(**study.best_trial.params)
-    best_model.fit(X_train, Y_train)
+    xgb = XGBRegressor(**study.best_trial.params)
+    xgb.fit(X_train, Y_train)
 
-    y_pred = best_model.predict(X_valid)
+    y_pred = xgb.predict(X_valid)
     mse = mean_squared_error(Y_valid, y_pred)
     mae= mean_absolute_error(Y_valid, y_pred)
     r2 = r2_score(Y_valid, y_pred)
@@ -58,13 +58,13 @@ def model():
     print("R²:", r2)
 
     # Check overfitting
-    train_preds = best_model.predict(X_train)
-    val_preds = best_model.predict(X_valid)
+    train_preds = xgb.predict(X_train)
+    val_preds = xgb.predict(X_valid)
 
     print("Train R²:", r2_score(Y_train, train_preds))
     print("Val R²:", r2_score(Y_valid, val_preds))
 
-    joblib.dump(best_model, "../models/xgb_model_games_played.pkl")
+    joblib.dump(xgb, "../models/xgb_model_games_played.pkl")
 
 if __name__ == '__main__':
     model()

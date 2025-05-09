@@ -20,7 +20,7 @@ def model():
             'goals_lag_1', 'goals_lag_2', 'goals_lag_3', 'goals_lag_4', 'goals_lag_5', 
             'gpg_lag_1', 'gpg_lag_2', 'gpg_lag_3', 'gpg_lag_4', 'gpg_lag_5', 'apg_lag_1',
             'xGoalsFor_team', 'goalsFor_team', 'highDangerShotsFor_team', 'highDangerxGoalsFor_team',
-            'highDangerGoalsFor', 'xGoalsFor - goalsFor', 'games_played_per']
+            'highDangerGoalsFor', 'xGoalsFor - goalsFor', 'games_played_per', 'goals_weighted', 'gpg_weighted']
     target = "next_goals_per_game"
 
     df_model = df
@@ -32,13 +32,14 @@ def model():
 
     def estimate(trial):
         params = {
-            "n_estimators": trial.suggest_int("n_estimators", 100, 800),
-            "max_depth": trial.suggest_int("max_depth", 2, 8),
-            "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.3),
-            "subsample": trial.suggest_float("subsample", 0.6, 1.0),
-            "colsample_bytree": trial.suggest_float("colsample_bytree", 0.6, 1.0),
-            "reg_alpha": trial.suggest_float("reg_alpha", 0.0, 1.0),
-            "reg_lambda": trial.suggest_float("reg_lambda", 1.0, 5.0),
+            "n_estimators": trial.suggest_int("n_estimators", 300, 600),
+            "max_depth": trial.suggest_int("max_depth", 2, 5),
+            "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.05),
+            "subsample": trial.suggest_float("subsample", 0.6, 0.9),
+            "colsample_bytree": trial.suggest_float("colsample_bytree", 0.6, 0.9),
+            "reg_alpha": trial.suggest_float("reg_alpha", 0.3, 0.8),
+            "reg_lambda": trial.suggest_float("reg_lambda", 2.0, 4.0),
+            "min_child_weight": trial.suggest_int("min_child_weight", 3, 8),
             "random_state": 0
         }
 
