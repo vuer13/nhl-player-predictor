@@ -29,7 +29,7 @@ def predict():
                 "Predicted Goals Scored per 82 Games"]
 
     df_2024 = df_2024[feature_final]
-    df_2024.to_csv("../data/final/games_played_pred2.csv")
+    df_2024.to_csv("../data/final/goals_pred.csv")
 
 def processData():
     df = pd.read_csv("../data/cleaned_data.csv")
