@@ -25,7 +25,7 @@ def predict():
     df_2024["Predicted Assists Percentage"] = np.expm1(prediction)
     df_2024["Predicted Assists per 82 Games"] = np.ceil(df_2024["Predicted Assists Percentage"] * 82)
 
-    feature_final = ["name", "position", "age", "games_played", "goals", "points", "pAssists", "sAssists", 
+    feature_final = ["name", "playerId", "position", "age", "games_played", "goals", "points", "pAssists", "sAssists", 
                 "icetime_per_game", "ppg", "apg", "gpg", "goalsFor_team", "Predicted Assists Percentage", 
                 "Predicted Assists per 82 Games"]
 

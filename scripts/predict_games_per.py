@@ -18,7 +18,7 @@ def predict():
     df_2024["Predicted Games Played Percentage"] = prediction
     df_2024["Predicted Games Played"] = np.minimum(np.ceil(df_2024["Predicted Games Played Percentage"] * 82), 82)
 
-    feature_final = ["name", "position", "age", "games_played", "goals", "points", "pAssists", "sAssists", 
+    feature_final = ["name", "playerId", "position", "age", "games_played", "goals", "points", "pAssists", "sAssists", 
                 "icetime_per_game", "ppg", "apg", "gpg", "goalsFor_team", "Predicted Games Played Percentage", 
                 "Predicted Games Played"]
 

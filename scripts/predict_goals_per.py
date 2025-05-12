@@ -24,7 +24,7 @@ def predict():
     df_2024["Predicted Goals Scored Percentage"] = prediction
     df_2024["Predicted Goals Scored per 82 Games"] = np.ceil(df_2024["Predicted Goals Scored Percentage"] * 82)
 
-    feature_final = ["name", "position", "age", "games_played", "goals", "points", "pAssists", "sAssists", 
+    feature_final = ["name", "playerId", "position", "age", "games_played", "goals", "points", "pAssists", "sAssists", 
                 "icetime_per_game", "ppg", "apg", "gpg", "goalsFor_team", "Predicted Goals Scored Percentage", 
                 "Predicted Goals Scored per 82 Games"]
 
