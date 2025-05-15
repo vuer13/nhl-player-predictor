@@ -9,7 +9,9 @@ def predict():
 
     features = ["games_played", "icetime_per_game", "icetime_per_game_lag_1", "games_played_per", "games_played_per_lag_1",
             "games_played_per_lag_2", "games_played_per_lag_3", "games_played_per_lag_4", "games_played_per_lag_5",
-            "games_played_lag_1", "points_per_60", "age", "age2", 'pos_C', 'pos_D', 'pos_L', 'pos_R', 'points', 'on_ice_chances']
+            "games_played_lag_1", "points_per_60", "age", "age2", 'pos_C', 'pos_D', 'pos_L', 'pos_R', 'points', 'on_ice_chances',
+            'hits', 'penality_mins', 'pen_drawn', 'corsi', "games_played_lag_2", "games_played_lag_3", 'on_ice_goals',
+            "xGoalsForAfterShifts", "corsiForAfterShifts", "iceTimeRank"]
 
     df_2024_predict = df_2024[features]
 

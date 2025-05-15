@@ -23,7 +23,8 @@ def model():
             'sAssists_lag_1', 'sAssists_lag_2', 'sAssists_lag_3', 'sAssists_lag_4', 'sAssists_lag_5',
             'apg_lag_1', 'apg_lag_2', 'apg_lag_3', 'apg_lag_4', 'apg_lag_5',
             'xGoalsFor_team', 'goalsFor_team', 'highDangerShotsFor_team', 'highDangerxGoalsFor_team',
-            'highDangerGoalsFor', 'xGoalsFor - goalsFor', 'games_played_per', 'assists_weighted', 'apg_weighted']
+            'highDangerGoalsFor', 'xGoalsFor - goalsFor', 'games_played_per', 'assists_weighted', 'apg_weighted',
+            'corsi', "xGoalsForAfterShifts", "corsiForAfterShifts"]
     target = "log_apg"
 
     df_model = df

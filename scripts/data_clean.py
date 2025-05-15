@@ -93,7 +93,8 @@ def clean_season_df(df):
 
     columns = ["playerId", "season", "name", "position", "team", "games_played", "I_F_xGoals", "I_F_primaryAssists",
            "I_F_secondaryAssists", "I_F_shotsOnGoal", "I_F_points", "I_F_goals", "icetime",
-           "OnIce_F_highDangerShots", "OnIce_F_goals"]
+           "OnIce_F_highDangerShots", "OnIce_F_goals", "iceTimeRank", "I_F_hits", "I_F_penalityMinutes", "penalityMinutesDrawn",
+           "onIce_corsiPercentage", "xGoalsForAfterShifts", "corsiForAfterShifts"]
 
     df_filtered = df_filtered[columns]
 
@@ -116,7 +117,11 @@ def clean_season_df(df):
             "I_F_points": "points",
             "I_F_goals": "goals",
             "OnIce_F_highDangerShots": "on_ice_chances",
-            "OnIce_F_goals": "on_ice_goals"
+            "OnIce_F_goals": "on_ice_goals",
+            "I_F_hits": "hits",
+            "I_F_penalityMinutes": "penality_mins",
+            "penalityMinutesDrawn": "pen_drawn",
+            "onIce_corsiPercentage": "corsi"
         },
         inplace=True
     )
@@ -184,8 +189,9 @@ def teamClean():
         lag_col = ag_col = f"games_played_per_lag_{lag}"
         to_lag[lag_col] = to_lag.groupby("playerId")["games_played_per"].shift(lag)
 
-    lag_col = "games_played_lag_1"
-    to_lag[lag_col] = to_lag.groupby("playerId")["games_played"].shift(lag)
+    for lag in range(1, 4):
+        lag_col = ag_col = f"games_played_lag_{lag}"
+        to_lag[lag_col] = to_lag.groupby("playerId")["games_played"].shift(lag)
 
     to_lag = to_lag.sort_values(["playerId", "season"]).reset_index(drop=True)
     to_lag["next_games_played_per"] = to_lag.groupby("playerId")["games_played_per"].shift(-1)

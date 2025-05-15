@@ -15,7 +15,8 @@ def predict():
             'goals_lag_1', 'goals_lag_2', 'goals_lag_3', 'goals_lag_4', 'goals_lag_5', 
             'gpg_lag_1', 'gpg_lag_2', 'gpg_lag_3', 'gpg_lag_4', 'gpg_lag_5', 'apg_lag_1',
             'xGoalsFor_team', 'goalsFor_team', 'highDangerShotsFor_team', 'highDangerxGoalsFor_team',
-            'highDangerGoalsFor', 'xGoalsFor - goalsFor', 'games_played_per', 'goals_weighted', 'gpg_weighted']
+            'highDangerGoalsFor', 'xGoalsFor - goalsFor', 'games_played_per', 'goals_weighted', 'gpg_weighted',
+            'corsi', "xGoalsForAfterShifts", "corsiForAfterShifts"]
 
     df_2024_predict = df_2024[features]
 
