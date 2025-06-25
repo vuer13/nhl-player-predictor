@@ -19,13 +19,50 @@ Goals per game model:
 This models training and validation R² score are the most similar, indicating very minimal overfitting (almost none). This model does obtain the best MSE and R² scores. Though we can improve the model with better predictors such as the player's linemates and other team factors, this model does do a great job predicting the goals scored for a given player.
 
 Assists per game mode:
-- MAE: 0.08042644561586847
-- MSE: 0.010782144203922015
-- R²: 0.6794809188167186
+- MAE: 0.0804
+- MSE: 0.0108
+- R²: 0.6795
 
 The models training and valdiation R² showed similar scores, indicating minimal overfitting. I noticed this model has difficulty predicting assists for players who score high values, so I specifically tuned it so players with a higher assist per game would be weighed more. The model can be improved with better predictors to enhance the model, but this model does the good enough job in predicting the assists scored for a given player.
 
+# UPDATE: 06/2025
+This project was further predicted with a LSTM and GRU model, using the pytorch library. The statistics for each model are as follows:
+
+LSTM:
+
+Games played percentage
+- R²: 0.2228
+- MAE: 0.2015
+- MSE: 0.0726
+
+Goals per game
+- R²: 0.5612
+- MAE: 0.0638
+- MSE: 0.0089
+
+Assists per game
+- R²: 0.5774
+- MAE: 0.0935
+- MSE: 0.0157
+
+GRU:
+
+Games played percentage
+- R²: 0.2484
+- MAE: 0.1996
+- MSE: 0.0703
+
+Goals per game
+- R²: 0.5640
+- MAE: 0.0631
+- MSE: 0.0089
+
+Assists per game
+- R²: 0.5958
+- MAE: 0.0918
+- MSE: 0.0150
+
+Both models performed similarly, with the GRU model outperforming the LSTM model slightly. These two models outperformed the XGBoost model when predicting the games played percentage, but not the other two categories. The overall model scored a lower R² score compared to the XGBoost model but scored similar MSE scores.
 
 # Next Step
 - Creating a frontend for the statistics predicted
-- Further improving the models by using other datasets and finding other predictors
