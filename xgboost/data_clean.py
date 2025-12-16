@@ -77,10 +77,10 @@ def lag_predict_data(all_players_df):
     to_lag_1 = ["icetime_per_game"]
 
     lag_col = "icetime_per_game_lag_1"
-    to_lag[lag_col] = to_lag.groupby("playerId")["icetime_per_game"].shift(lag)
+    to_lag[lag_col] = to_lag.groupby("playerId")["icetime_per_game"].shift(1)
     
     to_lag["next_goals_per_game"] = to_lag.groupby("playerId")["gpg"].shift(-1)
-    to_lag["next_assists_per_game"] = to_lag.groupby("playerId")["apg"].shift(-1).values.flatten()
+    to_lag["next_assists_per_game"] = to_lag.groupby("playerId")["apg"].shift(-1)
 
     to_lag.to_csv("../data/combined_players_draft2.csv", index=False)
 
